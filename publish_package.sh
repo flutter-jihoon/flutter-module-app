@@ -31,7 +31,7 @@ find ./build/host/outputs/repo -name '*release*.pom' | while read -r POM_PATH; d
 	ARTIFACT_ID=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='artifactId']/text()" "$POM_PATH")
 	# GitHub 패키지 관련 정보 설정
 	OWNER="flutter-jihoon"
-	REPOSITORY="flutter-aar"
+	REPOSITORY="flutter-module-app"
 
 	# Maven을 사용하여 파일을 배포하는 명령 실행
 	mvn --batch-mode deploy:deploy-file \
