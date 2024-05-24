@@ -34,15 +34,20 @@ cat <<EOF > $ROOT_POM
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.example</groupId>
-    <artifactId>root-project</artifactId>
+    <groupId>io.cashwalk</groupId>
+    <artifactId>Module-Flutter</artifactId>
     <version>$VERSION</version>
     <packaging>pom</packaging>
     <dependencies>
 EOF
 
+# GitHub 패키지 관련 정보 설정
+OWNER="flutter-jihoon"
+REPOSITORY="flutter-module-app"
+
 find ./build/host/outputs/repo -name '*release*.pom' | while read -r POM_PATH; do
 	# POM 파일에서 값을 추출
+	DEPENDENCY_FILE="${POM_PATH%.pom}.aar"
 	DEPENDENCY_GROUP_ID=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='groupId']/text()" "$POM_PATH")
 	DEPENDENCY_ARTIFACT_ID=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='artifactId']/text()" "$POM_PATH")
 	DEPENDENCY_VERSION=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='version']/text()" "$POM_PATH")
@@ -54,11 +59,17 @@ find ./build/host/outputs/repo -name '*release*.pom' | while read -r POM_PATH; d
             <version>$DEPENDENCY_VERSION</version>
         </dependency>
 EOF
+	# Maven을 사용하여 파일을 배포하는 명령 실행
+	mvn --batch-mode deploy:deploy-file \
+		-Dfile=${DEPENDENCY_FILE} \
+		-DgroupId=${DEPENDENCY_GROUP_ID} \
+		-DartifactId=${DEPENDENCY_ARTIFACT_ID} \
+		-Dversion=${DEPENDENCY_VERSION} \
+		-Dpackaging=aar \
+		-DpomFile=${POM_PATH} \
+		-DrepositoryId=github \
+		-Durl=https://maven.pkg.github.com/${OWNER}/${REPOSITORY}
 done
-
-# GitHub 패키지 관련 정보 설정
-OWNER="flutter-jihoon"
-REPOSITORY="flutter-module-app"
 
 # 루트 pom.xml에 닫는 태그 추가
 cat <<EOF >> $ROOT_POM
