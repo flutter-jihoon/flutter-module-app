@@ -41,21 +41,17 @@ cat <<EOF > $ROOT_POM
     <dependencies>
 EOF
 
-# 각 모듈의 폴더 생성 및 pom.xml 복사
 find ./build/host/outputs/repo -name '*release*.pom' | while read -r POM_PATH; do
-	# dependency 추가 코드 작성
-	# .aar 파일의 경로를 .pom 파일의 경로를 통해 찾음
-	FILE="${POM_PATH%.pom}.aar"
-	# POM 파일에서 groupId 값을 추출
-	GROUP_ID=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='groupId']/text()" "$POM_PATH")
-	# POM 파일에서 artifactId 값을 추출
-	ARTIFACT_ID=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='artifactId']/text()" "$POM_PATH")
+	# POM 파일에서 값을 추출
+	DEPENDENCY_GROUP_ID=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='groupId']/text()" "$POM_PATH")
+	DEPENDENCY_ARTIFACT_ID=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='artifactId']/text()" "$POM_PATH")
+	DEPENDENCY_VERSION=$(xmllint --xpath "//*[local-name()='project']/*[local-name()='version']/text()" "$POM_PATH")
 
 	cat <<EOF >> $ROOT_POM
         <dependency>
-            <groupId>$GROUP_ID</groupId>
-            <artifactId>$ARTIFACT_ID</artifactId>
-            <version>$VERSION</version>
+            <groupId>$DEPENDENCY_GROUP_ID</groupId>
+            <artifactId>$DEPENDENCY_ARTIFACT_ID</artifactId>
+            <version>$DEPENDENCY_VERSION</version>
         </dependency>
 EOF
 done
