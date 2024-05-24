@@ -35,7 +35,7 @@ cat <<EOF > $ROOT_POM
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.cashwalk</groupId>
-    <artifactId>Module-Flutter</artifactId>
+    <artifactId>module-flutter</artifactId>
     <version>$VERSION</version>
     <packaging>pom</packaging>
     <dependencies>
