@@ -11,6 +11,22 @@ dependencies:
 
   cupertino_icons: ^1.0.2
 
+  firebase_core: 2.24.2
+  firebase_core_platform_interface: 5.0.0
+  firebase_crashlytics: 3.4.9
+
+  # 캐시톡 코드
+  messenger_flutter:
+    git:
+      url: git@github.com:cashwalk/Messanger-Flutter.git
+      ref: 2.0.9
+
+  # 모챌 코드
+  modu_challenge:
+    git: 
+      url: git@github.com:cashwalk/EveryChallenge-Flutter.git
+      ref: 2.2.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
