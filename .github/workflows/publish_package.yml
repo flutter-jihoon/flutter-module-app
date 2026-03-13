@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 env:
+  ENGINE_RELEASE_TITLE: local-engine
   ENGINE_SRC_PATH: ${{ github.workspace }}/engine/src
 
 jobs:
@@ -33,7 +34,7 @@ jobs:
           mkdir -p ${{ env.ENGINE_SRC_PATH }}/out
 
           gh release download \
-            "${{ github.ref_name }}" \
+            "${{ env.ENGINE_RELEASE_TITLE }}" \
             --pattern "${{ env.LOCAL_ENGINE_TARGET }}.zip" \
             --dir /tmp/engine-ios
 
@@ -41,7 +42,7 @@ jobs:
             -d ${{ env.ENGINE_SRC_PATH }}/out/
 
           gh release download \
-            "${{ github.ref_name }}" \
+            "${{ env.ENGINE_RELEASE_TITLE }}" \
             --pattern "${{ env.LOCAL_ENGINE_HOST_TARGET }}.zip" \
             --dir /tmp/engine-host
 
@@ -103,7 +104,7 @@ jobs:
           mkdir -p ${{ env.ENGINE_SRC_PATH }}/out
 
           gh release download \
-            "${{ github.ref_name }}" \
+            "${{ env.ENGINE_RELEASE_TITLE }}" \
             --pattern "${{ env.LOCAL_ENGINE_TARGET }}.zip" \
             --dir /tmp/engine-android
 
@@ -111,7 +112,7 @@ jobs:
             -d ${{ env.ENGINE_SRC_PATH }}/out/
 
           gh release download \
-            "${{ github.ref_name }}" \
+            "${{ env.ENGINE_RELEASE_TITLE }}" \
             --pattern "${{ env.LOCAL_ENGINE_HOST_TARGET }}.zip" \
             --dir /tmp/engine-host
 
