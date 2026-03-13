@@ -2,6 +2,7 @@ name: 플러터 모듈 배포
 
 permissions:
   contents: write
+  packages: write
 
 on:
   workflow_dispatch:
