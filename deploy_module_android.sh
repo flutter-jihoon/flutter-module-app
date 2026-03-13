@@ -82,11 +82,25 @@ collect_dependencies() {
     DEPENDENCY_GROUP_ID=$(awk -F'[<>]' '/<groupId>/{print $3; exit}' "$POM_PATH")
     DEPENDENCY_ARTIFACT_ID=$(awk -F'[<>]' '/<artifactId>/{print $3; exit}' "$POM_PATH")
     DEPENDENCY_VERSION=$(awk -F'[<>]' '/<version>/{print $3; exit}' "$POM_PATH")
+
+    local PACKAGING
+    PACKAGING=$(awk -F'[<>]' '/<packaging>/{print $3; exit}' "$POM_PATH")
+    if [ -z "$PACKAGING" ]; then
+      if [ -f "${POM_PATH%.pom}.aar" ]; then
+        PACKAGING="aar"
+      elif [ -f "${POM_PATH%.pom}.jar" ]; then
+        PACKAGING="jar"
+      else
+        PACKAGING="aar"  # fallback
+      fi
+    fi
+
     cat <<EOF >>$ROOT_POM
         <dependency>
             <groupId>$DEPENDENCY_GROUP_ID</groupId>
             <artifactId>$DEPENDENCY_ARTIFACT_ID</artifactId>
             <version>$DEPENDENCY_VERSION</version>
+            <type>$PACKAGING</type>
         </dependency>
 EOF
   done
@@ -94,17 +108,44 @@ EOF
 
 deploy_single() {
   local POM_PATH="$1"
-  local DEPENDENCY_FILE="${POM_PATH%.pom}.aar"
-  local DEPENDENCY_GROUP_ID=$(awk -F'[<>]' '/<groupId>/{print $3; exit}' "$POM_PATH")
-  local DEPENDENCY_ARTIFACT_ID=$(awk -F'[<>]' '/<artifactId>/{print $3; exit}' "$POM_PATH")
-  local DEPENDENCY_VERSION=$(awk -F'[<>]' '/<version>/{print $3; exit}' "$POM_PATH")
+  local DEPENDENCY_GROUP_ID
+  local DEPENDENCY_ARTIFACT_ID
+  local DEPENDENCY_VERSION
+  local DEPENDENCY_FILE
+  local PACKAGING
+
+  DEPENDENCY_GROUP_ID=$(awk -F'[<>]' '/<groupId>/{print $3; exit}' "$POM_PATH")
+  DEPENDENCY_ARTIFACT_ID=$(awk -F'[<>]' '/<artifactId>/{print $3; exit}' "$POM_PATH")
+  DEPENDENCY_VERSION=$(awk -F'[<>]' '/<version>/{print $3; exit}' "$POM_PATH")
+
+  PACKAGING=$(awk -F'[<>]' '/<packaging>/{print $3; exit}' "$POM_PATH")
+  if [ -z "$PACKAGING" ] || [ "$PACKAGING" = "pom" ]; then
+    if [ -f "${POM_PATH%.pom}.aar" ]; then
+      PACKAGING="aar"
+      DEPENDENCY_FILE="${POM_PATH%.pom}.aar"
+    elif [ -f "${POM_PATH%.pom}.jar" ]; then
+      PACKAGING="jar"
+      DEPENDENCY_FILE="${POM_PATH%.pom}.jar"
+    else
+      echo "WARNING: No artifact file found for $POM_PATH, skipping."
+      return 0
+    fi
+  else
+    DEPENDENCY_FILE="${POM_PATH%.pom}.${PACKAGING}"
+    if [ ! -f "$DEPENDENCY_FILE" ]; then
+      echo "WARNING: Expected $PACKAGING artifact not found at $DEPENDENCY_FILE, skipping."
+      return 0
+    fi
+  fi
+
+  echo "Deploying [$PACKAGING] ${DEPENDENCY_GROUP_ID}:${DEPENDENCY_ARTIFACT_ID}:${DEPENDENCY_VERSION}"
 
   mvn --batch-mode deploy:deploy-file \
     -Dfile="${DEPENDENCY_FILE}" \
     -DgroupId="${DEPENDENCY_GROUP_ID}" \
     -DartifactId="${DEPENDENCY_ARTIFACT_ID}" \
     -Dversion="${DEPENDENCY_VERSION}" \
-    -Dpackaging=aar \
+    -Dpackaging="${PACKAGING}" \
     -DpomFile="${POM_PATH}" \
     -DrepositoryId=github \
     -Durl="https://maven.pkg.github.com/${OWNER}/${REPOSITORY}"
@@ -147,7 +188,6 @@ main() {
   collect_dependencies
   deploy_dependencies
   finalize_and_deploy_root_pom
-  bash restore_dependency.sh
 }
 
 main
