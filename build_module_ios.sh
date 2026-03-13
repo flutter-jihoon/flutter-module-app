@@ -16,12 +16,13 @@ DIST_DIR="./dist/ios/FlutterModule"
 flutter clean
 flutter pub get
 
-PODFILE_PATH=$(find ./.ios -name 'Podfile' -print -quit)
+PODFILE_PATH=$(find ./.ios -name 'Podfile' -print -quit || true)
 
-sed -i '' "1s/.*/platform :ios, '13.0'/" "$PODFILE_PATH"
-sed -i '' '36,40d' "$PODFILE_PATH"
+if [[ -f "$PODFILE_PATH" ]]; then
+  sed -i '' "1s/.*/platform :ios, '13.0'/" "$PODFILE_PATH"
+  sed -i '' '36,40d' "$PODFILE_PATH"
 
-cat <<'EOF' >> "$PODFILE_PATH"
+  cat <<'EOF' >> "$PODFILE_PATH"
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
@@ -39,12 +40,12 @@ post_install do |installer|
   end
 end
 EOF
-
+fi
 
 flutter build ios-framework \
-  "${LOCAL_ENGINE_FLAGS[@]}" \
-  --no-pub \
-  --no-debug \
-  --no-profile \
-  --xcframework \
-  --output="$DIST_DIR"
+    "${LOCAL_ENGINE_FLAGS[@]}" \
+    --no-pub \
+    --no-debug \
+    --no-profile \
+    --xcframework \
+    --output="$DIST_DIR"

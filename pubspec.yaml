@@ -8,6 +8,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+dependency_overrides:
+  flutter_test: 
+    sdk: flutter
   
 flutter:
   uses-material-design: true
