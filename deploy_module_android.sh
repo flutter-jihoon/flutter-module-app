@@ -17,7 +17,8 @@ if [ -z "$VERSION" ]; then
   exit 1
 fi
 
-DIST_DIR="./dist/android"
+FLUTTER_PROJECT_DIR="$(pwd)"
+DIST_DIR="${FLUTTER_PROJECT_DIR}/dist/android"
 OWNER="cashwalk"
 REPOSITORY="Add-To-App-Flutter"
 
@@ -47,7 +48,7 @@ flutter build aar \
   --output="$DIST_DIR" \
   --build-number="$VERSION" \
   --obfuscate \
-  --split-debug-info=build/app/outputs/symbols
+  --split-debug-info="$DIST_DIR/app/outputs/symbols"
 
 ROOT_POM="$DIST_DIR/host/outputs/repo/pom.xml"
 cat > "$ROOT_POM" <<EOF
@@ -61,6 +62,7 @@ cat > "$ROOT_POM" <<EOF
   <packaging>pom</packaging>
   <dependencies>
 EOF
+
 
 deploy_single() {
   local pom_path="$1"
