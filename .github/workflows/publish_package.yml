@@ -13,7 +13,7 @@ env:
 jobs:
   release-ios-module:
     name: iOS 모듈 배포
-    runs-on: macos-15-xlarge
+    runs-on: macos-26
     timeout-minutes: 60
     env:  
       LOCAL_ENGINE_TARGET: ios_release
@@ -98,7 +98,6 @@ jobs:
         with:
           java-version: 17
           distribution: corretto
-          cache: gradle
 
       - name: Android 로컬 엔진 다운로드
         run: |
