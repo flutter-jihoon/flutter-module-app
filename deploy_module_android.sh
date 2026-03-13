@@ -19,8 +19,8 @@ fi
 
 FLUTTER_PROJECT_DIR="$(pwd)"
 DIST_DIR="${FLUTTER_PROJECT_DIR}/dist/android"
-OWNER="cashwalk"
-REPOSITORY="Add-To-App-Flutter"
+OWNER="flutter-jihoon"
+REPOSITORY="flutter-module-app"
 
 flutter clean
 flutter pub get
@@ -56,8 +56,8 @@ cat > "$ROOT_POM" <<EOF
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>io.cashwalk</groupId>
-  <artifactId>module-flutter</artifactId>
+  <groupId>lim.jihoon</groupId>
+  <artifactId>flutter-module</artifactId>
   <version>$VERSION</version>
   <packaging>pom</packaging>
   <dependencies>
