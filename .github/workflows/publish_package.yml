@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 env:
-  ENGINE_RELEASE_REPO: flutter-jihoon/flutter-module-app
   ENGINE_SRC_PATH: ${{ github.workspace }}/engine/src
 
 jobs:
@@ -33,16 +32,16 @@ jobs:
         run: |
           mkdir -p ${{ env.ENGINE_SRC_PATH }}/out
 
-          gh release download --repo ${{ env.ENGINE_RELEASE_REPO }} \
-            --tag "${{ github.ref_name }}" \
+          gh release download \
+            "${{ github.ref_name }}" \
             --pattern "${{ env.LOCAL_ENGINE_TARGET }}.zip" \
             --dir /tmp/engine-ios
 
           unzip -q /tmp/engine-ios/${{ env.LOCAL_ENGINE_TARGET }}.zip \
             -d ${{ env.ENGINE_SRC_PATH }}/out/
 
-          gh release download --repo ${{ env.ENGINE_RELEASE_REPO }} \
-            --tag "${{ github.ref_name }}" \
+          gh release download \
+            "${{ github.ref_name }}" \
             --pattern "${{ env.LOCAL_ENGINE_HOST_TARGET }}.zip" \
             --dir /tmp/engine-host
 
@@ -103,16 +102,16 @@ jobs:
         run: |
           mkdir -p ${{ env.ENGINE_SRC_PATH }}/out
 
-          gh release download --repo ${{ env.ENGINE_RELEASE_REPO }} \
-            --tag "${{ github.ref_name }}" \
+          gh release download \
+            "${{ github.ref_name }}" \
             --pattern "${{ env.LOCAL_ENGINE_TARGET }}.zip" \
             --dir /tmp/engine-android
 
           unzip -q /tmp/engine-android/${{ env.LOCAL_ENGINE_TARGET }}.zip \
             -d ${{ env.ENGINE_SRC_PATH }}/out/
 
-          gh release download --repo ${{ env.ENGINE_RELEASE_REPO }} \
-            --tag "${{ github.ref_name }}" \
+          gh release download \
+            "${{ github.ref_name }}" \
             --pattern "${{ env.LOCAL_ENGINE_HOST_TARGET }}.zip" \
             --dir /tmp/engine-host
 
